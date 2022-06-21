@@ -1,0 +1,68 @@
+"%dev":
+  quarkus:
+    http:
+      port: 8080
+      root-path: /api
+      cors: true
+    smallrye-openapi:
+      path: /openapi
+    swagger-ui:
+      always-include: true
+      path: swagger-ui
+      theme: material
+    oidc:
+      auth-server-url: http://localhost:8081/auth/realms/daybird-quarkus
+      client-id: daybird-app
+      tls:
+        verification: none
+      authentication:
+        user-info-required: true
+    oidc-client:
+      auth-server-url: http://localhost:8081/auth/realms/daybird-quarkus
+      client-id: daybird-app
+      grant:
+        type: exchange
+    oidc-token-propagation-reactive:
+      exchange-token: true
+    rest-client:
+      database-api:
+        url: http://localhost:8082/api
+        scope: javax.inject.Singleton
+
+---
+
+"%prod":
+  quarkus:
+  native:
+    add-all-charsets: true
+    native-image-xmx: 10GB
+    http:
+      port: ${SERVER_PORT}
+      root-path: /api
+      cors: true
+    smallrye-openapi:
+      path: /openapi
+    swagger-ui:
+      always-include: true
+      path: swagger-ui
+      theme: material
+    oidc:
+      auth-server-url: ${KEYCLOAK_URL}/${KEYCLOAK_REALM} #url = https://test.iam.hiqs.de/auth/realms #realm = neelix
+      client-id: ${KEYCLOAK_CLIENT_ID} #client-id = daybird-prod
+      credentials:
+        secrect: ac9828cb-84bc-45ec-98bc-99b69d3ed1ab
+      tls:
+        verification: none
+      authentication:
+        user-info-required: true
+    oidc-client:
+      auth-server-url: ${KEYCLOAK_URL}/${KEYCLOAK_REALM} #url = https://test.iam.hiqs.de/auth/realms #realm = neelix
+      client-id: ${KEYCLOAK_CLIENT_ID} #client-id = daybird-prod
+      grant:
+        type: exchange
+    oidc-token-propagation-reactive:
+      exchange-token: true
+    rest-client:
+      database-api:
+        url: ${DATABASE_URL} # this will daybird-quarkus-mongodb url
+        scope: javax.inject.Singleton
